@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'libLWWebUI_Example' do
+  pod 'libLWWebUI', :path => '../'
+
+  target 'libLWWebUI_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
