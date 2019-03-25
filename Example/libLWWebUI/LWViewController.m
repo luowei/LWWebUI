@@ -7,6 +7,7 @@
 //
 
 #import "LWViewController.h"
+#import "LWWKWebViewController.h"
 
 @interface LWViewController ()
 
@@ -14,16 +15,20 @@
 
 @implementation LWViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)btnAction:(UIButton *)sender {
+    LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
+    [self presentViewController:webVC  animated:YES completion:^{
+    }];
 }
 
 @end
