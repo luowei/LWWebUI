@@ -134,6 +134,19 @@
 
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if([self isModal]){
+        UIBarButtonItem *closeItem = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(dismissController)];
+        self.navigationItem.leftBarButtonItem = closeItem;
+    }
+}
+
+- (void)dismissController {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
 - (void)moreAction:(UIBarButtonItem *)moreBtn {
 
     //添加一个Safari浏览打开的图标
@@ -170,6 +183,17 @@
         [self.wkWebView removeObserver:self forKeyPath:@"estimatedProgress" context:nil];
         [self.wkWebView removeObserver:self forKeyPath:@"title" context:nil];
     }
+}
+
+- (BOOL)isModal {
+    if([self presentingViewController]){
+        return YES;
+    }else  if([[[self navigationController] presentingViewController] presentedViewController] == [self navigationController]){
+        return YES;
+    }else if([[[self tabBarController] presentingViewController] isKindOfClass:[UITabBarController class]]){
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark - KVO Observe

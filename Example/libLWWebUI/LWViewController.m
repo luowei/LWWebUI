@@ -28,10 +28,11 @@
 }
 
 - (IBAction)btnAction:(UIButton *)sender {
-//    LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
-//    [self.navigationController pushViewController:webVC animated:YES];
+    LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:webVC];
+    [self presentViewController:nav animated:YES completion:nil];
 
-    [self.view lwwk_openURLWithUrl:[NSURL URLWithString:@"tel://1582140005"]];
+//    [self.view lwwk_openURLWithUrl:[NSURL URLWithString:@"tel://1582140005"]];
 
 }
 
