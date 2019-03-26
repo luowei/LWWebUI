@@ -11,11 +11,20 @@
 #define LWWKLog(...)
 #endif
 
-@class MyWKWebView;
+@class LWWKWebView;
+
+@interface UIView (LWWKSuperRecurse)
+//获得指class类型的父视图
+- (id)lwwk_superViewWithClass:(Class)clazz;
+@end
+
+@interface UIPrintPageRenderer (LWWKPDF)
+- (NSData*)lwwk_printToPDF;
+@end
 
 @interface LWWKWebViewController : UIViewController
 
-@property (nonatomic, strong) MyWKWebView *wkWebView;
+@property (nonatomic, strong) LWWKWebView *wkWebView;
 @property (strong, nonatomic) UIProgressView *webProgress;
 
 @property(nonatomic, strong) NSURL *url;

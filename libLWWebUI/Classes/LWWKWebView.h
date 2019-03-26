@@ -17,9 +17,18 @@
 
 #import <WebKit/WebKit.h>
 
-@class MyWKWebView;
+@class LWWKWebView;
 
-@interface MyWKUserContentController:WKUserContentController
+
+@interface UIResponder (LWWKExtension)
+
+//打开指定url
+- (void)lwwk_openURLWithUrl:(NSURL *)url;
+
+@end
+
+
+@interface LWWKUserContentController:WKUserContentController
 
 @property(nonatomic, strong) NSMutableDictionary<NSString*,id> *handlerNames;
 
@@ -29,16 +38,16 @@
 @end
 
 
-@protocol MyWebViewDelegate<NSObject>
+@protocol LWWebViewDelegate<NSObject>
 
 @property(nonatomic, copy) void (^finishNavigationProgressBlock)();
-@property(nonatomic, copy) void (^addWebViewBlock)(MyWKWebView **wb, NSURL *);
+@property(nonatomic, copy) void (^addWebViewBlock)(LWWKWebView **wb, NSURL *);
 @property(nonatomic, copy) void (^closeActiveWebViewBlock)();
 @property(nonatomic, copy) void (^presentViewControllerBlock)(UIViewController *);
 
 @end
 
-@interface MyWKWebView : WKWebView<WKNavigationDelegate, WKScriptMessageHandler,WKUIDelegate,UIActionSheetDelegate>
+@interface LWWKWebView : WKWebView<WKNavigationDelegate, WKScriptMessageHandler,WKUIDelegate,UIActionSheetDelegate>
 
 @property(nonatomic, copy) void (^finishNavigationProgressBlock)();
 

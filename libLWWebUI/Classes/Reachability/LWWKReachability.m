@@ -25,7 +25,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "Reachability.h"
+#import "LWWKReachability.h"
 
 #import <sys/socket.h>
 #import <netinet/in.h>
@@ -35,10 +35,10 @@
 #import <netdb.h>
 
 
-NSString *const kReachabilityChangedNotification = @"kReachabilityChangedNotification";
+NSString *const kLWWKReachabilityChangedNotification = @"kLWWKReachabilityChangedNotification";
 
 
-@interface Reachability ()
+@interface LWWKReachability ()
 
 @property (nonatomic, assign) SCNetworkReachabilityRef  reachabilityRef;
 @property (nonatomic, strong) dispatch_queue_t          reachabilitySerialQueue;
@@ -50,7 +50,7 @@ NSString *const kReachabilityChangedNotification = @"kReachabilityChangedNotific
 @end
 
 
-static NSString *reachabilityFlags(SCNetworkReachabilityFlags flags)
+static NSString *lwwk_reachabilityFlags(SCNetworkReachabilityFlags flags)
 {
 	return [NSString stringWithFormat:@"%c%c %c%c%c%c%c%c%c",
 									  #if	TARGET_OS_IPHONE
@@ -69,11 +69,11 @@ static NSString *reachabilityFlags(SCNetworkReachabilityFlags flags)
 }
 
 // Start listening for reachability notifications on the current run loop
-static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
+static void lwwk_ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void *info)
 {
 #pragma unused (target)
 
-	Reachability *reachability = ((__bridge Reachability*)info);
+	LWWKReachability *reachability = ((__bridge LWWKReachability*)info);
 
 	// We probably don't need an autoreleasepool here, as GCD docs state each queue has its own autorelease pool,
 	// but what the heck eh?
@@ -84,13 +84,13 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 }
 
 
-@implementation Reachability
+@implementation LWWKReachability
 
 #pragma mark - Class Constructor Methods
 
 +(instancetype)reachabilityWithHostName:(NSString*)hostname
 {
-	return [Reachability reachabilityWithHostname:hostname];
+	return [LWWKReachability reachabilityWithHostname:hostname];
 }
 
 +(instancetype)reachabilityWithHostname:(NSString*)hostname
@@ -196,7 +196,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 	SCNetworkReachabilityContext    context = { 0, NULL, NULL, NULL, NULL };
 	context.info = (__bridge void *)self;
 
-	if(SCNetworkReachabilitySetCallback(self.reachabilityRef, TMReachabilityCallback, &context))
+	if(SCNetworkReachabilitySetCallback(self.reachabilityRef, lwwk_ReachabilityCallback, &context))
 	{
 		// Set it as our reachability queue, which will retain the queue
 		if(SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, self.reachabilitySerialQueue))
@@ -383,7 +383,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 
 #pragma mark - reachability status stuff
 
--(NetworkStatus)currentReachabilityStatus
+-(LWWKNetworkStatus)currentReachabilityStatus
 {
 	if([self isReachable])
 	{
@@ -412,7 +412,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 
 -(NSString*)currentReachabilityString
 {
-	NetworkStatus temp = [self currentReachabilityStatus];
+	LWWKNetworkStatus temp = [self currentReachabilityStatus];
 
 	if(temp == ReachableViaWWAN)
 	{
@@ -429,7 +429,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 
 -(NSString*)currentReachabilityFlags
 {
-	return reachabilityFlags([self reachabilityFlags]);
+	return lwwk_reachabilityFlags([self reachabilityFlags]);
 }
 
 #pragma mark - Callback function calls this method
@@ -458,7 +458,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 
 	// this makes sure the change notification happens on the MAIN THREAD
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification
+		[[NSNotificationCenter defaultCenter] postNotificationName:kLWWKReachabilityChangedNotification
 															object:self];
 	});
 }

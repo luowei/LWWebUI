@@ -6,8 +6,10 @@
 //  Copyright (c) 2019 luowei. All rights reserved.
 //
 
+#import <libLWWebUI/libLWWebUI-umbrella.h>
 #import "LWViewController.h"
 #import "LWWKWebViewController.h"
+#import "LWWKWebView.h"
 
 @interface LWViewController ()
 
@@ -26,8 +28,11 @@
 }
 
 - (IBAction)btnAction:(UIButton *)sender {
-    LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
-    [self.navigationController pushViewController:webVC animated:YES];
+//    LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
+//    [self.navigationController pushViewController:webVC animated:YES];
+
+    [self.view lwwk_openURLWithUrl:[NSURL URLWithString:@"tel://1582140005"]];
+
 }
 
 @end

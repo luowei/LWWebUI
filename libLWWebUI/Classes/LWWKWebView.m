@@ -6,31 +6,68 @@
 //  Copyright (c) 2015 rootls. All rights reserved.
 //
 
-#import "MyWKWebView.h"
-#import "Reachability.h"
-#import "UIResponder+Extension.h"
+#import "LWWKWebView.h"
+#import "LWWKReachability.h"
 #import <objc/message.h>
 
-@implementation UIResponder (OpenURL)
+
+@implementation UIResponder (LWWKExtension)
 
 //打开指定url
-- (void)gotoURL:(NSURL *)url {
+- (void)lwwk_openURLWithUrl:(NSURL *)url {
     UIResponder *responder = self;
     while ((responder = [responder nextResponder]) != nil) {
-        if ([responder respondsToSelector:@selector(openURL:)]) {
-            [responder performSelector:@selector(openURL:) withObject:url];
+        if (@available(iOS 10.0,*)) {
+            SEL sel = @selector(openURL:options:completionHandler:);
+            if ([responder respondsToSelector:sel]) {
+                NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[responder methodSignatureForSelector:sel]];
+                [inv setSelector:sel];
+                [inv setTarget:responder];
+
+                NSDictionary *dict = nil;
+                void (^completionHandler)(BOOL);
+                
+                [inv setArgument:&url atIndex:2];
+                [inv setArgument:&dict atIndex:3];
+                [inv setArgument:&completionHandler atIndex:4];
+
+                [inv invoke];
+                return;
+            }
+        }else{
+            if ([responder respondsToSelector:@selector(openURL:)]) {
+                [responder performSelector:@selector(openURL:) withObject:url];
+                return;
+            }
         }
     }
+}
+
+- (void)performWithArguments:(NSArray *)arguments {
+
+    SEL aSelector = NSSelectorFromString([arguments firstObject]);
+
+    NSMethodSignature *signature = [self methodSignatureForSelector:aSelector];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    [invocation setTarget:self];
+    [invocation setSelector:aSelector];
+
+    for (NSUInteger i = 1; i < arguments.count; i++) {
+        id obj = arguments[i];
+        [invocation setArgument:&obj atIndex:i + 1];
+    }
+
+    [invocation invoke];
 }
 
 @end
 
 
-@implementation MyWKUserContentController
+@implementation LWWKUserContentController
 
 //获得MyWKUserContentController单例
 + (instancetype)shareInstance {
-    static MyWKUserContentController *myContentController = nil;
+    static LWWKUserContentController *myContentController = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
         myContentController = [[self alloc] init];
@@ -60,14 +97,14 @@
 @end
 
 
-@interface MyWKWebView () {
+@interface LWWKWebView () {
 
 }
 
 @property(nonatomic, strong) NSError *error;
 @end
 
-@implementation MyWKWebView
+@implementation LWWKWebView
 
 static WKProcessPool *_pool;
 
@@ -83,7 +120,7 @@ static WKProcessPool *_pool;
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration {
 
     //设置多窗口cookie共享
-    configuration.processPool = [MyWKWebView pool];
+    configuration.processPool = [LWWKWebView pool];
 //    self.backForwardList
 
     self = [super initWithFrame:frame configuration:configuration];
@@ -94,7 +131,7 @@ static WKProcessPool *_pool;
 //        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
         //加载用户js文件,修改加载网页内容
-        [self addUserScriptsToWeb:(MyWKUserContentController *) configuration.userContentController];
+        [self addUserScriptsToWeb:(LWWKUserContentController *) configuration.userContentController];
 
         //网络连接状态标示
         _netStatusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -125,7 +162,7 @@ static WKProcessPool *_pool;
 }
 
 //加载用户js文件
-- (void)addUserScriptsToWeb:(MyWKUserContentController *)userContentController {
+- (void)addUserScriptsToWeb:(LWWKUserContentController *)userContentController {
 //    //添加脚本消息处理器根据消息名称
 //    if (![userContentController.handlerNames valueForKey:@"docStartInjection"])
 //        [userContentController addScriptMessageHandler:self name:@"docStartInjection"];
@@ -181,23 +218,23 @@ static WKProcessPool *_pool;
     NSRegularExpression *rx = [[NSRegularExpression alloc] initWithPattern:@"\\/\\/itunes\\.apple\\.com\\/" options:NSRegularExpressionCaseInsensitive error:nil];
     BOOL isMatch = [rx numberOfMatchesInString:urlString options:0 range:NSMakeRange(0, urlString.length)] > 0 ;
     if (isMatch) {
-        [self gotoURL:url];
+        [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
     //蒲公英安装不了问题
     if ([urlString hasPrefix:@"itms-services://?action=download-manifest"]) {
-        [self gotoURL:url];
+        [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
     if ([url.scheme isEqualToString:@"tel"]) {
-        [self openURLWithUrl:url];
+        [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
     if([url.scheme.lowercaseString isEqualToString:@"lwinputmethod"]){
-        [self openURLWithUrl:url];
+        [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
     }
@@ -215,7 +252,7 @@ static WKProcessPool *_pool;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
     if([navigationResponse.response.MIMEType isEqualToString:@"application/x-apple-aspen-config"]){
-        [self openURLWithUrl:navigationResponse.response.URL];
+        [self lwwk_openURLWithUrl:navigationResponse.response.URL];
         decisionHandler(WKNavigationResponsePolicyCancel);
     }
     decisionHandler(WKNavigationResponsePolicyAllow);
@@ -245,10 +282,10 @@ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredentia
             //- (void)_setCustomUserAgent:(id)arg1;
             NSString *selectorName = [@"_setCustom" stringByAppendingString:@"UserAgent:"];
             if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone){
-                NSString *UAString = [MyWKWebView getiOSUserAgent];
+                NSString *UAString = [LWWKWebView getiOSUserAgent];
                 ((void (*)(id, SEL, id)) objc_msgSend)(self, NSSelectorFromString(selectorName), UAString);
             }else{
-                NSString *UAString = [MyWKWebView getMacUserAgent];
+                NSString *UAString = [LWWKWebView getMacUserAgent];
                 ((void (*)(id, SEL, id)) objc_msgSend)(self, NSSelectorFromString(selectorName), UAString);
             }
         }
@@ -437,8 +474,8 @@ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredentia
 
 //判断网络连接状态
 - (BOOL)connected {
-    Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    LWWKReachability *reachability = [LWWKReachability reachabilityForInternetConnection];
+    LWWKNetworkStatus networkStatus = [reachability currentReachabilityStatus];
     return networkStatus != NotReachable;
 }
 

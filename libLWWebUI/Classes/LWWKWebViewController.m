@@ -4,10 +4,45 @@
 //
 
 #import "LWWKWebViewController.h"
-#import "MyWKWebView.h"
+#import "LWWKWebView.h"
 #import "Masonry.h"
-#import "UIPrintPageRenderer+Extentsion.h"
-#import "UIView+Extensions.h"
+
+
+@implementation UIView (LWWKSuperRecurse)
+
+//获得指class类型的父视图
+- (id)lwwk_superViewWithClass:(Class)clazz {
+    UIResponder *responder = self;
+    while (![responder isKindOfClass:clazz]) {
+        responder = [responder nextResponder];
+        if (nil == responder) {
+            break;
+        }
+    }
+    return responder;
+}
+
+@end
+
+
+@implementation UIPrintPageRenderer (LWWKPDF)
+
+- (NSData *)lwwk_printToPDF {
+    NSMutableData *pdfData = [NSMutableData data];
+    UIGraphicsBeginPDFContextToData(pdfData, self.paperRect, nil);
+    [self prepareForDrawingPages:NSMakeRange(0, (NSUInteger) self.numberOfPages)];
+
+    CGRect bounds = UIGraphicsGetPDFContextBounds();
+    for (int i = 0; i < self.numberOfPages; i++) {
+        UIGraphicsBeginPDFPage();
+        [self drawPageAtIndex:i inRect:bounds];
+    }
+
+    UIGraphicsEndPDFContext();
+    return pdfData;
+}
+
+@end
 
 
 @interface LWWKWebViewController ()
@@ -52,8 +87,8 @@
 
     //添加webview
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-    configuration.userContentController = [MyWKUserContentController shareInstance];
-    self.wkWebView = [[MyWKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
+    configuration.userContentController = [LWWKUserContentController shareInstance];
+    self.wkWebView = [[LWWKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
     [self.view addSubview:self.wkWebView];
 
     [self.wkWebView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -314,7 +349,7 @@ NSString *const UIActivityTypePDFPrintActivity = @"PDFPrintActivityActivityMine"
 
     [render setValue:[NSValue valueWithCGRect:paperRect] forKey:@"paperRect"];
     [render setValue:[NSValue valueWithCGRect:printableRect] forKey:@"printableRect"];
-    NSData *pdfData = [render printToPDF];
+    NSData *pdfData = [render lwwk_printToPDF];
 
     NSString *title = NSLocalizedStringFromTableInBundle(@"Export PDF", @"Local", LWWKWebBundle(self), nil);
     if([self.printView isKindOfClass:[WKWebView class]]){
@@ -339,7 +374,7 @@ NSString *const UIActivityTypePDFPrintActivity = @"PDFPrintActivityActivityMine"
             return;
         }
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[title, url] applicationActivities:nil];
-        UIViewController *vc = [self.printView superViewWithClass:[UIViewController class]];
+        UIViewController *vc = [self.printView lwwk_superViewWithClass:[UIViewController class]];
         //显示弹出层
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:activityVC];
