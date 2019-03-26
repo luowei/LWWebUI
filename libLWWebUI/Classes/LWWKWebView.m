@@ -215,8 +215,7 @@ static WKProcessPool *_pool;
     NSURL *url = navigationAction.request.URL;
     NSString *urlString = (url) ? url.absoluteString : @"";
     // iTunes: App Store link跳转不了问题
-    NSRegularExpression *rx = [[NSRegularExpression alloc] initWithPattern:@"\\/\\/itunes\\.apple\\.com\\/" options:NSRegularExpressionCaseInsensitive error:nil];
-    BOOL isMatch = [rx numberOfMatchesInString:urlString options:0 range:NSMakeRange(0, urlString.length)] > 0 ;
+    BOOL isMatch = [self is_itunesURLString:urlString];
     if (isMatch) {
         [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
@@ -248,6 +247,12 @@ static WKProcessPool *_pool;
     }
 
     decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (BOOL)is_itunesURLString:(NSString *)urlString {
+    NSRegularExpression *rx = [[NSRegularExpression alloc] initWithPattern:@"\\/\\/itunes\\.apple\\.com\\/" options:NSRegularExpressionCaseInsensitive error:nil];
+    BOOL isMatch = [rx numberOfMatchesInString:urlString options:0 range:NSMakeRange(0, urlString.length)] > 0 ;
+    return isMatch;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
