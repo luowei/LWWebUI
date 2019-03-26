@@ -12,7 +12,7 @@
 #define MyLog(format, ...)
 #endif
 
-#define LWWKWebBundle(obj)  ([NSBundle bundleWithPath:[[NSBundle bundleForClass:[obj class]] pathForResource:@"libLWWebUI" ofType:@"bundle"]] ?: [NSBundle mainBundle])
+#define LWWKWebBundle(obj)  ([NSBundle bundleWithPath:[[NSBundle bundleForClass:[obj class]] pathForResource:@"libLWWebUI" ofType:@"bundle"]] ?: ([NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"libLWWebUI" ofType:@"bundle"]] ?: [NSBundle mainBundle]))
 
 
 #import <WebKit/WebKit.h>
