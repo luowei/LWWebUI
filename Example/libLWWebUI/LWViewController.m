@@ -27,8 +27,7 @@
 
 - (IBAction)btnAction:(UIButton *)sender {
     LWWKWebViewController *webVC = [LWWKWebViewController wkWebViewControllerWithURL:[NSURL URLWithString:@"https://m.baidu.com"]];
-    [self presentViewController:webVC  animated:YES completion:^{
-    }];
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 @end

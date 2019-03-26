@@ -292,12 +292,9 @@ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredentia
 //            NSLog(@"errorCode:%ld",(long)[error code]);
             //error webView
             if (self.estimatedProgress < 0.3) {
-                NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"libLWWebUI" ofType:@"bundle"];
-                NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-                if(!bundle){
-                    bundle = [NSBundle mainBundle];
-                }
-                NSString *path = [bundle pathForResource:@"failedPage" ofType:@"html"];
+//                NSString *bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"libLWWebUI" ofType:@"bundle"];
+//                NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"libLWWebUI" ofType:@"bundle"]];
+                NSString *path = [LWWKWebBundle(self) pathForResource:@"failedPage" ofType:@"html"];
                 NSError *error2;
                 NSString *htmlString = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error2];
                 NSURL *failingURL = error.userInfo[@"NSErrorFailingURLKey"];
@@ -344,7 +341,7 @@ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredentia
             NSLog(@"errorCode:%ld", (long) [error code]);
             //error webView
             if (self.estimatedProgress < 0.3) {
-                NSString *path = [[NSBundle mainBundle] pathForResource:@"failedPage" ofType:@"htm"];
+                NSString *path = [LWWKWebBundle(self)pathForResource:@"failedPage" ofType:@"htm"];
                 NSError *error2;
                 NSString *htmlString = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error2];
                 NSURL *failingURL = error.userInfo[@"NSErrorFailingURLKey"];

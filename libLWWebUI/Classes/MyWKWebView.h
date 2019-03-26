@@ -12,6 +12,9 @@
 #define MyLog(format, ...)
 #endif
 
+#define LWWKWebBundle(obj)  ([NSBundle bundleWithPath:[[NSBundle bundleForClass:[obj class]] pathForResource:@"libLWWebUI" ofType:@"bundle"]] ?: [NSBundle mainBundle])
+
+
 #import <WebKit/WebKit.h>
 
 @class MyWKWebView;

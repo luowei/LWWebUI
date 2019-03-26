@@ -43,8 +43,9 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
 
+    UIImage *image = [UIImage imageNamed:@"more_dot" inBundle:LWWKWebBundle(self) compatibleWithTraitCollection:nil];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"more_dot"]
+            initWithImage:image
                     style:UIBarButtonItemStylePlain
                    target:self
                    action:@selector(moreAction:)];
@@ -104,11 +105,16 @@
     //NSString *textItem = self.wkWebView.URL.absoluteString;
     NSArray *items = @[self.wkWebView.URL];
 
-    LWWebViewMoreActivity *webViewMoreActivity = [[LWWebViewMoreActivity alloc] initWithiphoneImage:[UIImage imageNamed:@"Safari50"] ipadImage:[UIImage imageNamed:@"Safari53"]];
+    UIImage *safari50Image = [UIImage imageNamed:@"Safari50" inBundle:LWWKWebBundle(self) compatibleWithTraitCollection:nil];
+    UIImage *safari53Image = [UIImage imageNamed:@"Safari53" inBundle:LWWKWebBundle(self) compatibleWithTraitCollection:nil];
+    UIImage *pdfPrint50Image = [UIImage imageNamed:@"pdfPrint50" inBundle:LWWKWebBundle(self) compatibleWithTraitCollection:nil];
+    UIImage *pdfPrint53Image = [UIImage imageNamed:@"pdfPrint53" inBundle:LWWKWebBundle(self) compatibleWithTraitCollection:nil];
+
+    LWWebViewMoreActivity *webViewMoreActivity = [[LWWebViewMoreActivity alloc] initWithiphoneImage:safari50Image ipadImage:safari53Image];
     webViewMoreActivity.URL = self.wkWebView.URL;
 
     //添加导出pdf
-    LWPDFPrintActivity *pdfPrintActivity = [[LWPDFPrintActivity alloc] initWithiphoneImage:[UIImage imageNamed:@"pdfPrint50"] ipadImage:[UIImage imageNamed:@"pdfPrint53"]];
+    LWPDFPrintActivity *pdfPrintActivity = [[LWPDFPrintActivity alloc] initWithiphoneImage:pdfPrint50Image ipadImage:pdfPrint53Image];
     pdfPrintActivity.printView = self.wkWebView;
     
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:@[webViewMoreActivity,pdfPrintActivity]];
@@ -186,7 +192,8 @@ NSString *const UIActivityTypeOpenInSafari = @"OpenInSafariActivityMine";
 }
 
 - (NSString *)activityTitle {
-    return NSLocalizedString(@"Open in Safari", nil);
+//    return NSLocalizedString(@"Open in Safari", nil);
+    return NSLocalizedStringFromTableInBundle(@"Open in Safari", @"Local", LWWKWebBundle(self), nil);
 }
 
 - (UIImage *)activityImage {
@@ -251,7 +258,8 @@ NSString *const UIActivityTypePDFPrintActivity = @"PDFPrintActivityActivityMine"
 }
 
 - (NSString *)activityTitle {
-    return NSLocalizedString(@"Export PDF", nil);
+//    return NSLocalizedString(@"Export PDF", nil);
+    return NSLocalizedStringFromTableInBundle(@"Export PDF", @"Local", LWWKWebBundle(self), nil);
 }
 
 - (UIImage *)activityImage {
@@ -308,14 +316,14 @@ NSString *const UIActivityTypePDFPrintActivity = @"PDFPrintActivityActivityMine"
     [render setValue:[NSValue valueWithCGRect:printableRect] forKey:@"printableRect"];
     NSData *pdfData = [render printToPDF];
 
-    NSString *title = NSLocalizedString(@"Export PDF", nil);
+    NSString *title = NSLocalizedStringFromTableInBundle(@"Export PDF", @"Local", LWWKWebBundle(self), nil);
     if([self.printView isKindOfClass:[WKWebView class]]){
         title = self.title;
         if(!title || title.length == 0){
             title = ((WKWebView *)self.printView).title;
         }
         if(!title || title.length == 0){
-            title = NSLocalizedString(@"Export PDF", nil);
+            title = NSLocalizedStringFromTableInBundle(@"Export PDF", @"Local", LWWKWebBundle(self), nil);
         }
         NSCharacterSet* illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<>"];
         title = [[title componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@"_"];
