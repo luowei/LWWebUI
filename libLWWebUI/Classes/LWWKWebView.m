@@ -10,6 +10,73 @@
 #import "LWWKReachability.h"
 #import <objc/message.h>
 
+@implementation NSObject (LWWKSwizzling)
+
++ (BOOL)lwwk_swizzleMethod:(SEL)origSel withMethod:(SEL)altSel {
+    Method origMethod = class_getInstanceMethod(self, origSel);
+    Method altMethod = class_getInstanceMethod(self, altSel);
+    if (!origMethod || !altMethod) {
+        return NO;
+    }
+    class_addMethod(self, origSel, class_getMethodImplementation(self, origSel), method_getTypeEncoding(origMethod));
+    class_addMethod(self, altSel, class_getMethodImplementation(self, altSel), method_getTypeEncoding(altMethod));
+    method_exchangeImplementations(class_getInstanceMethod(self, origSel), class_getInstanceMethod(self, altSel));
+    return YES;
+}
+
++ (BOOL)lwwk_swizzleClassMethod:(SEL)origSel withMethod:(SEL)altSel {
+    return [object_getClass((id) self) lwwk_swizzleMethod:origSel withMethod:altSel];
+}
+
+@end
+
+@implementation WKWebView (LWWKSwizzling)
+
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [WKWebView lwwk_swizzleMethod:@selector(loadRequest:) withMethod:@selector(myLoadRequest:)];
+    });
+}
+
+- (void)myLoadRequest:(NSURLRequest *_Nullable)request {
+
+    NSMutableURLRequest *mRequest = request.mutableCopy;
+
+    NSArray<NSHTTPCookie *> *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:request.URL];
+//    NSArray<NSHTTPCookie *> *cookies = @[];
+    if(@available(iOS 11.0,*)){
+
+        dispatch_group_t group = dispatch_group_create();
+//        dispatch_queue_main_t queue = dispatch_get_main_queue();
+        dispatch_queue_t queue = dispatch_queue_create("com.wodedata.libLWWebUI.LWWKWebView", DISPATCH_QUEUE_CONCURRENT);
+
+//        //把并行队列加入到group当中，异步执行，执行完后会触发 dispatch_group_notify
+//        dispatch_group_async(group, queue, ^{});
+
+        //使用 enter/leave 控制执行流程，只有成对出现时才会触发 dispatch_group_notify
+        for (NSHTTPCookie *cookie in cookies) {
+            dispatch_group_enter(group);
+            [[[WKWebsiteDataStore defaultDataStore] httpCookieStore] setCookie:cookie completionHandler:^{
+                dispatch_group_leave(group);
+            }];
+        }
+
+        dispatch_group_notify(group, queue, ^(){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self myLoadRequest:mRequest];
+            });
+        });
+
+    }else{
+        NSDictionary<NSString *, NSString *> *requestHeaderFields = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
+        [mRequest setHTTPShouldHandleCookies:YES];
+        [mRequest setAllHTTPHeaderFields:requestHeaderFields];
+        [self myLoadRequest:mRequest];
+    }
+}
+
+@end
 
 @implementation UIResponder (LWWKExtension)
 
