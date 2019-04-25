@@ -33,7 +33,6 @@
         dispatch_group_t group = dispatch_group_create();
 
         //删除所有cookie，再添加
-        dispatch_group_enter(group);
         [[[WKWebsiteDataStore defaultDataStore] httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             for(NSHTTPCookie *cookie in cookies){
                 dispatch_group_enter(group);
@@ -41,7 +40,6 @@
                     dispatch_group_leave(group);
                 }];
             }
-            dispatch_group_leave(group);
         }];
 
 //        dispatch_group_async(group, dispatch_get_current_queue(), ^{
