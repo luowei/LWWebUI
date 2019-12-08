@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'LWWebUI'
-  s.version          = '0.1.0'
+  s.version          = '1.0.0'
   s.summary          = 'A short description of LWWebUI.'
 
 # This description is used to generate tags and improve search results.
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 LWWebUI 包含 LWWKWebViewController & LWWKWebView
                        DESC
 
-  s.homepage         = 'https://github.com/luowei/LWWebUI'
+  s.homepage         = 'https://gitlab.com/ioslibraries1/liblwwebui.git'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'luowei' => 'luowei@wodedata.com' }
-  s.source           = { :git => 'https://github.com/luowei/LWWebUI.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://gitlab.com/ioslibraries1/liblwwebui.git' }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
