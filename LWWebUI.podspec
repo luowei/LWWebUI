@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint libLWWebUI.podspec' to ensure this is a
+# Be sure to run `pod lib lint LWWebUI.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'libLWWebUI'
+  s.name             = 'LWWebUI'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of libLWWebUI.'
+  s.summary          = 'A short description of LWWebUI.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,23 +18,23 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-libLWWebUI 包含 LWWKWebViewController & LWWKWebView
+LWWebUI 包含 LWWKWebViewController & LWWKWebView
                        DESC
 
-  s.homepage         = 'https://github.com/luowei/libLWWebUI'
+  s.homepage         = 'https://github.com/luowei/LWWebUI'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'luowei' => 'luowei@wodedata.com' }
-  s.source           = { :git => 'https://github.com/luowei/libLWWebUI.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/luowei/LWWebUI.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
 
-  s.source_files = 'libLWWebUI/Classes/**/*'
+  s.source_files = 'LWWebUI/Classes/**/*'
 
   s.resource_bundles = {
-    'libLWWebUI' => ['libLWWebUI/Assets/**/*']
-    # 'libLWWebUI' => ['libLWWebUI/Assets/*.png']
+    'LWWebUI' => ['LWWebUI/Assets/**/*']
+    # 'LWWebUI' => ['LWWebUI/Assets/*.png']
   }
 
   s.public_header_files = 'Pod/Classes/**/*.h'

@@ -1,23 +1,23 @@
 PODS:
-  - libLWWebUI (0.1.0):
+  - LWWebUI (0.1.0):
     - Masonry
   - Masonry (1.1.0)
 
 DEPENDENCIES:
-  - libLWWebUI (from `../`)
+  - LWWebUI (from `../`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Masonry
 
 EXTERNAL SOURCES:
-  libLWWebUI:
+  LWWebUI:
     :path: "../"
 
 SPEC CHECKSUMS:
-  libLWWebUI: 6892ad88d884044f950096e5e938eaceb917da98
+  LWWebUI: a98bf858da6dd5ec1aa0804fa475849aae9e85b5
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
 
-PODFILE CHECKSUM: 33096005a759fa2197f69f34aeca012d6f6c4659
+PODFILE CHECKSUM: dc2be24ef01b31ae360acbcd831a1e432d0de925
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.4

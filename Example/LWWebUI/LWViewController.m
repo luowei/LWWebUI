@@ -1,12 +1,12 @@
 //
 //  LWViewController.m
-//  libLWWebUI
+//  LWWebUI
 //
 //  Created by luowei on 03/25/2019.
 //  Copyright (c) 2019 luowei. All rights reserved.
 //
 
-#import <libLWWebUI/libLWWebUI-umbrella.h>
+#import <LWWebUI/LWWebUI-umbrella.h>
 #import "LWViewController.h"
 #import "LWWKWebViewController.h"
 #import "LWWKWebView.h"

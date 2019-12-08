@@ -2,7 +2,7 @@ use_frameworks!
 
 platform :ios, '8.0'
 
-target 'libLWWebUI_Example' do
-  pod 'libLWWebUI', :path => '../'
+target 'LWWebUI_Example' do
+  pod 'LWWebUI', :path => '../'
 
 end
