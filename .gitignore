@@ -27,3 +27,8 @@ DerivedData
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
 Pods/
+
+# package产出物
+LWWebUI-*/
+build/
+product/
