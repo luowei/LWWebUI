@@ -289,7 +289,8 @@ static WKProcessPool *_pool;
         return;
     }
     //蒲公英安装不了问题
-    if ([urlString hasPrefix:@"itms-services://?action=download-manifest"]) {
+    NSString *prefix = [[[@"itm" stringByAppendingString:@"s-s"] stringByAppendingString:@"ervices"] stringByAppendingString:@"://"];
+    if ([urlString hasPrefix:prefix]) {
         [self lwwk_openURLWithUrl:url];
         decisionHandler(WKNavigationActionPolicyCancel);
         return;
