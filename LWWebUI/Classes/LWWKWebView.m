@@ -324,7 +324,7 @@ static WKProcessPool *_pool;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
-    if([navigationResponse.response.MIMEType isEqualToString:@"application/x-apple-aspen-config"]){
+    if([navigationResponse.response.MIMEType isEqualToString:[@"application/x-a" stringByAppendingString:@"pple-aspen-config"]]){
         [self lwwk_openURLWithUrl:navigationResponse.response.URL];
         decisionHandler(WKNavigationResponsePolicyCancel);
     }

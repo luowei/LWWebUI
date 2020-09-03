@@ -27,7 +27,8 @@
 @property (nonatomic, strong) LWWKWebView *wkWebView;
 @property (strong, nonatomic) UIProgressView *webProgress;
 
-@property(nonatomic, strong) NSURL *url;
+@property (nonatomic, copy) NSString  *url;
+@property(nonatomic, strong) NSURL *webURL;
 
 + (LWWKWebViewController *)loadURL:(NSURL *)url;
 

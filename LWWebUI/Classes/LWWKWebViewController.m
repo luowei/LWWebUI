@@ -63,7 +63,7 @@
 
 + (LWWKWebViewController *)wkWebViewControllerWithURL:(NSURL *)url {
     LWWKWebViewController *wkWebVC = [LWWKWebViewController new];
-    wkWebVC.url = url;
+    wkWebVC.webURL = url;
     return wkWebVC;
 }
 
@@ -126,10 +126,12 @@
         [self.wkWebView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:nil];
     }
 
-    if(self.url){
-        [self loadURL:self.url];
+    if(self.webURL){
+        [self loadURL:self.webURL];
     }else if(self.HTMLString){
         [self loadHTMLString:self.HTMLString baseURL:self.HTMLStringBaseURL];
+    }else if(self.url){
+        [self loadURL:[NSURL URLWithString:self.url]];
     }
 
 }
