@@ -31,7 +31,8 @@ LWWebUI，基于WKWebView的WebView容器组件与Web控制器组件，包含 LW
 
   s.ios.deployment_target = '8.0'
 
-  s.source_files = 'LWWebUI/Classes/**/*'
+  s.source_files = 'LWWebUI/Classes/**/*.{h,m}'
+  s.exclude_files = 'LWWebUI/Classes/**/*.swift'
 
   s.resource_bundles = {
     'LWWebUI' => ['LWWebUI/Assets/**/*']

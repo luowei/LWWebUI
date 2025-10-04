@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/libLWWebUI.svg?style=flat)](https://cocoapods.org/pods/libLWWebUI)
 [![Platform](https://img.shields.io/cocoapods/p/libLWWebUI.svg?style=flat)](https://cocoapods.org/pods/libLWWebUI)
 
-[English](./README.md) | [中文版](./README_ZH.md)
+[English](./README.md) | [中文版](./README_ZH.md) | [Swift Version](./README_SWIFT_VERSION.md)
 
 ---
 
